@@ -11,7 +11,7 @@ export async function addMember(req, res) {
     let theMember = await Members.findAll({
       where: { email: req.body.email },
     });
-    if (theMember.length == 0) {
+    if (theMember.length == 1) {
       return res.json({
         success: false,
         message: "Email exists!",
