@@ -1,4 +1,5 @@
 import Books from "../models/books.js";
+import Borrows from "../models/borrows.js";
 
 //Add a Book
 export async function addBook(req, res) {
@@ -103,6 +104,15 @@ export async function updateBook(req, res) {
 
 //Delete a book
 export async function deleteBook(req, res) {
+  let ifBorrowed = await Borrows.findAll({
+    where: { titleid: req.params.id },
+  });
+  if (ifBorrowed.length > 0) {
+    return res.json({
+      success: false,
+      message: "Failed. Book currently borrowed!",
+    });
+  }
   try {
     let bookToDelete = await Books.findAll({
       where: { bookid: req.params.id },
@@ -118,7 +128,7 @@ export async function deleteBook(req, res) {
         });
       } else {
         res.json({
-          success: true,
+          success: false,
           message: "No Book records found.",
         });
       }
